@@ -3,7 +3,11 @@
 		  var waMap = SimpleMapD3({
             container: '.simple-map-d3-wa-map',
             datasource: 'example-data/wa_county.geojson',
-            projection: 'mercator'
+            projection: 'mercator',
+			colorOn: true,
+            colorSet: 'BuGn',
+			colorProperty: 'pop_2014',
+            legendFormatter: d3.format(',f0')
           });
 	/*	  
           var mnPopMap = SimpleMapD3({
