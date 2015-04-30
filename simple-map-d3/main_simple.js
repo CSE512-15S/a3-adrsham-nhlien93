@@ -1,14 +1,28 @@
 (function($) {
         $(document).ready(function() {
-		  var waMap = SimpleMapD3({
+		        var waMap = SimpleMapD3({
             container: '.simple-map-d3-wa-map',
             datasource: 'example-data/wa_county.geojson',
             projection: 'mercator',
-			colorOn: true,
+            colorOn: true,
             colorSet: 'BuGn',
-			colorProperty: 'pop_2014',
+            colorProperty: 'pop_2014',
             legendFormatter: d3.format(',f0')
+
           });
+
+      //add a change listener to the slider
+      //this function will be called "everytime" the slider value changes
+      $("#yearSelector").on("input", function() {
+        //log value to console
+        console.log(this.value);
+        //change the value that displays current value of slider
+        $("#currentYear").html(this.value);
+
+        //TODO: more code here to update map
+        
+      });
+
 	/*	  
           var mnPopMap = SimpleMapD3({
             container: '.simple-map-d3-mn-pop-map',
