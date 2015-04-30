@@ -37,9 +37,9 @@
 }
 
 .smd-path {
-  stroke: #898989;
+  stroke: #000000;
   stroke-width: .4px;
-  stroke-opacity: .85;
+  stroke-opacity: .35;
 }
 
 .smd-path:hover {

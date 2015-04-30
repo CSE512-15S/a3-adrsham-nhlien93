@@ -191,9 +191,9 @@ header h4 {
   display: inline-block;
 }
 section {
-  margin-left: 30%;
+  margin-left: 10%;
   padding: 50px;
-  max-width: 600px;
+  max-width: 920px;
 }
 section ul,
 section ol {

@@ -301,12 +301,19 @@ function SimpleMapD3(o) {
       return smd;
     }
     
-    // Get values for range
-    for (d = 0; d < smd.data.features.length; d++) {
-      smd.valuesSet.push(parseFloat(smd.data.features[d].properties[smd.options.colorProperty]));
-    }
-    smd.valuesSet.sort(function(a, b) { return a - b; });
-  
+	if (smd.options.colorScale === 'linear') {
+		var pop = [2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000, 512000, 1024000];
+		for (var i = 0; i < pop.length; i++) {
+			smd.valuesSet.push(parseFloat(pop[i]));
+		}
+	} else {
+		// Get values for range
+		for (d = 0; d < smd.data.features.length; d++) {
+		  smd.valuesSet.push(parseFloat(smd.data.features[d].properties[smd.options.colorProperty]));
+		}
+		smd.valuesSet.sort(function(a, b) { return a - b; });	
+	}
+
     // Determine range function to use
     if (typeof scaleFunc != 'function') {
       scaleFunc = d3.scale[scaleFunc];
@@ -445,6 +452,13 @@ function SimpleMapD3(o) {
         legendSwatches.push(smd.colorRange.invertExtent(smd.options.colorSet[c])[0]);
       }
     }
+	
+	// Linear
+	if (smd.options.colorScale === 'linear') {
+      for (c = 0; c < 10; c++) {
+        legendSwatches.push(smd.valuesSet[c]);
+      }
+    }
     
     // Ensure we have something to make a legend with
     if (legendSwatches.length === 0) {
@@ -518,6 +532,7 @@ function SimpleMapD3(o) {
   // Render
   smd.drawMap = function() {
     // Render paths
+	console.log("calling inside draw map??");
     smd.featureGroup
       .selectAll('path')
         .data(smd.data.features)
