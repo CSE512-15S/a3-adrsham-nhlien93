@@ -1,0 +1,9 @@
+.hidden {
+	/*visibility: hidden;*/
+	display: none;
+}
+
+/*Font size for current year*/
+#currentYear {
+	font-size: 24pt;
+}
