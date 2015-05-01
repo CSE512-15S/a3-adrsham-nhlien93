@@ -3,6 +3,10 @@
 	display: none;
 }
 
+.transparent {
+	visibility: hidden;
+}
+
 /*Font size for current year*/
 #currentYear {
 	font-size: 24pt;

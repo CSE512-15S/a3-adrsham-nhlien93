@@ -20,6 +20,10 @@
 			legendFormatter: d3.format(',f0')
 		});
 
+    for (i=1991; i <=2014; i++) {
+      $(".simple-map-d3-wa-map-" + i).addClass("transparent");
+    }
+
 		//draw the rest of the maps until 2014, adding an event that fires when the drawing is done
 		for (i=1991; i <= 2014; i++) {
 			var waMap = SimpleMapD3({
@@ -45,6 +49,7 @@
 			//when the drawing is done, hide the div
 			waMap.events.on('rendered.YOUR_NAMESPACE', function(smd) {
 				//console.log(smd.options.year);
+        $(".simple-map-d3-wa-map-" + smd.options.year).removeClass("transparent");
 				$(".simple-map-d3-wa-map-" + smd.options.year).addClass("hidden");
 			});
 		}
