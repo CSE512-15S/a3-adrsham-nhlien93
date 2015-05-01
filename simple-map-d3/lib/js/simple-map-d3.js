@@ -56,6 +56,7 @@ function SimpleMapD3(o) {
   // Pennsylvania State University.
   // Licensed under the Apache License, Version 2.0
   smd.brewer = {
+	Custom: ['#ffffff', '#74c476', '#000000'],
     OrRd: ['#fff7ec', '#fee8c8', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548', '#d7301f', '#b30000', '#7f0000'],
     PuBu: ['#fff7fb', '#ece7f2', '#d0d1e6', '#a6bddb', '#74a9cf', '#3690c0', '#0570b0', '#045a8d', '#023858'],
     BuPu: ['#f7fcfd', '#e0ecf4', '#bfd3e6', '#9ebcda', '#8c96c6', '#8c6bb1', '#88419d', '#810f7c', '#4d004b'],
@@ -224,8 +225,8 @@ function SimpleMapD3(o) {
       .data([{ x: 0, y: 0 }]);
       
     smd.background = smd.canvas.append('rect')
-      .attr('width', smd.width)
-      .attr('height', smd.height)
+	  .attr('width', smd.width - mapOffset[0])
+      .attr('height', smd.height - mapOffset[1])
       .classed('smd-background', true)
       .style(smd.options.stylesBackground);
       
@@ -301,8 +302,8 @@ function SimpleMapD3(o) {
       return smd;
     }
     
-	if (smd.options.colorScale === 'linear') {
-		var pop = [2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000, 512000, 1024000];
+	if (smd.options.colorScale === 'linear' || smd.options.colorScale === 'log') {
+		var pop = [2000, 64000, 2048000];
 		for (var i = 0; i < pop.length; i++) {
 			smd.valuesSet.push(parseFloat(pop[i]));
 		}
@@ -321,7 +322,8 @@ function SimpleMapD3(o) {
     // Make range with appropriate values
     smd.colorRange = scaleFunc()
       .domain(smd.valuesSet)
-      .range(smd.options.colorSet);
+      .range(smd.options.colorSet)
+	  .interpolate(d3.interpolateHsl);
     
     // Clamp if can
     if (typeof smd.colorRange.clamp == 'function') {
@@ -426,7 +428,7 @@ function SimpleMapD3(o) {
   smd.drawLegend = function() {
     var qs;
     var formatter = smd.options.legendFormatter || d3.format(',');
-    var unit = 10;
+    var unit = 12;
     var width = smd.options.legendWidth || (smd.width / 5);
     var scale = smd.options.legendScale || 1;
     var min = d3.min(smd.valuesSet);
@@ -439,100 +441,187 @@ function SimpleMapD3(o) {
     if (smd.options.legendOn !== true || typeof smd.colorRange == 'undefined') {
       return smd;
     }
-    
-    // Specific to scale type, unfortunately
-    if (smd.options.colorScale === 'quantile') {
-      legendSwatches = smd.colorRange.quantiles();
-      legendSwatches[0] = min;
-    }
-    
-    // Quantize
-    if (smd.options.colorScale === 'quantize') {
-      for (c = 0; c < smd.options.colorSet.length; c++) {
-        legendSwatches.push(smd.colorRange.invertExtent(smd.options.colorSet[c])[0]);
-      }
-    }
-	
-	// Linear
-	if (smd.options.colorScale === 'linear') {
-      for (c = 0; c < 10; c++) {
-        legendSwatches.push(smd.valuesSet[c]);
-      }
-    }
-    
-    // Ensure we have something to make a legend with
-    if (legendSwatches.length === 0) {
-      return smd;
-    }
-    
-    // Specific to scale type, unfortunately
-    if (legendSwatches && legendSwatches.length > 0) {
-      // Make a wrapper for dragging
-      smd.draggableLegendGroup = smd.canvas.append('g')
-        .attr('class', 'smd-draggable-legend');
-    
-      // Make group for legend objects
-      smd.legendGroup = smd.draggableLegendGroup.append('g')
-        .attr('class', 'smd-legend-group');
-      
-      // Make container and label for legend
-      smd.legendGroup.append('rect')
-        .attr('class', 'smd-legend-container')
-        .attr('width', width)
-        .attr('height', legendSwatches.length * (unit * 2) + (unit * 3))
-        .attr('x', 0)
-        .attr('y', 0)
-        .style(smd.options.stylesLegendContainer);
-      smd.legendGroup.append('text')
-        .attr('class', 'smd-legend-label')
-        .attr('font-size', unit)
-        .attr('x', (unit * 1))
-        .attr('y', (unit * 2))
-        .text(smd.options.legendTitle)
-        .style(smd.options.stylesLegendTitleText);
-      
-      // Add colors swatches
-      smd.legendGroup
-        .selectAll('rect.smd-legend-swatch')
-          .data(legendSwatches)
-        .enter().append('rect')
-          .attr('class', 'smd-legend-swatch')
-          .attr('width', unit)
-          .attr('height', unit)
-          .attr('x', (unit * 1))
-          .attr('y', function(d, i) { return (i * unit * 2) + (unit * 3); })
-          .style(smd.options.stylesLegendSwatch)
-          .style('fill', function(d, i) { return smd.colorRange(d); });
-          
-      // Add text label
-      smd.legendGroup
-        .selectAll('text.smd-legend-amount')
-          .data(legendSwatches)
-        .enter().append('text')
-          .attr('class', 'smd-legend-amount')
-          .attr('font-size', unit)
-          .attr('x', (unit * 3))
-          .attr('y', function(d, i) { return (i * unit * 2) + (unit * 4 - 1); })
-          .text(function(d, i) { return '>= ' + formatter(d); })
-          .style(smd.options.stylesLegendText);
-      
-      // Scale legend
-      smd.legendGroup
-        .attr('transform', 'scale(' + scale + ')');
-        
-      // Offset group for dragging
-      smd.draggableLegendGroup
-        .attr('transform', 'translate(' + offset + ')')
-        .data([{ x: offset[0] - 1, y: offset[1] - 1 }]);
-    }
-  
-    return smd;
+    if (smd.options.colorScale === 'linear' || smd.options.colorScale === 'log') {
+		// Make a wrapper for dragging
+		smd.draggableLegendGroup = smd.canvas.append('g')
+			.attr('class', 'smd-draggable-legend');
+		
+		// Make group for legend objects
+		smd.legendGroup = smd.draggableLegendGroup.append('g')
+			.attr('class', 'smd-legend-group');
+
+
+		// Make container and label for legend
+		smd.legendGroup.append('rect')
+			.attr('class', 'smd-legend-container')
+			.attr('width', unit * 8 + 8)
+			.attr('height', unit * 16)
+			.attr('x', 0)
+			.attr('y', 0)
+			.style(smd.options.stylesLegendContainer);
+
+		smd.legendGroup.append('text')
+			.attr('class', 'smd-legend-label')
+			.attr('font-size', unit)
+			.attr('x', unit * 1)
+			.attr('y', unit * 2)
+			.text(smd.options.legendTitle)
+			.style(smd.options.stylesLegendTitleText);
+		
+		smd.svg =  smd.legendGroup.append("svg:svg")
+			.attr('x', unit)
+			.attr('y', unit * 3);
+			
+			
+		smd.gradient = smd.svg.append("svg:defs")
+			.append("svg:linearGradient")
+			.attr("id", "gradient")
+			.attr("x1", "0%")
+			.attr("y1", "0%")
+			.attr("x2", "0%")
+			.attr("y2", "100%")
+			.attr("spreadMethod", "pad");
+
+		smd.gradient.append("svg:stop")
+			.attr("offset", "0%")
+			.attr("stop-color", "#ffffff")
+			.attr("stop-opacity", 1);
+
+		smd.gradient.append("svg:stop")
+			.attr("offset", "50%")
+			.attr("stop-color", "#74c476")
+			.attr("stop-opacity", 1);
+			
+		smd.gradient.append("svg:stop")
+			.attr("offset", "100%")
+			.attr("stop-color", "#000000")
+			.attr("stop-opacity", 1);
+
+
+		smd.svg.append("svg:rect")
+			.attr("width", unit * 2)
+			.attr("height", unit * 12)
+			.style("fill", "url(#gradient)")
+			.style("stroke-width", 1)
+			.style("stroke", "#000000");
+			  
+		// Add text label
+		smd.legendGroup.append('text')
+			.attr('class', 'smd-legend-labels')
+			.attr('font-size', unit)
+			.attr('x', unit * 4)
+			.attr('y', unit * 4)
+			.text("2000")
+			.style(smd.options.stylesLegendText);
+		
+		smd.legendGroup.append('text')
+			.attr('class', 'smd-legend-labels')
+			.attr('font-size', unit)
+			.attr('x', unit * 4)
+			.attr('y', unit * 15)
+			.text("2048,000")
+			.style(smd.options.stylesLegendText);
+
+		// Scale legend
+		smd.legendGroup
+			.attr('transform', 'scale(' + scale + ')');
+			
+		// Offset group for dragging
+		smd.draggableLegendGroup
+			.attr('transform', 'translate(' + offset + ')')
+			.data([{ x: offset[0] - 1, y: offset[1] - 1 }]);
+			
+			
+		
+		
+		
+
+	} else {
+		// Specific to scale type, unfortunately
+		if (smd.options.colorScale === 'quantile') {
+		  legendSwatches = smd.colorRange.quantiles();
+		  legendSwatches[0] = min;
+		}
+		
+		// Quantize
+		if (smd.options.colorScale === 'quantize') {
+		  for (c = 0; c < smd.options.colorSet.length; c++) {
+			legendSwatches.push(smd.colorRange.invertExtent(smd.options.colorSet[c])[0]);
+		  }
+		}
+		
+		// Ensure we have something to make a legend with
+		if (legendSwatches.length === 0) {
+		  return smd;
+		}
+		
+		// Specific to scale type, unfortunately
+		if (legendSwatches && legendSwatches.length > 0) {
+		  // Make a wrapper for dragging
+		  smd.draggableLegendGroup = smd.canvas.append('g')
+			.attr('class', 'smd-draggable-legend');
+		
+		  // Make group for legend objects
+		  smd.legendGroup = smd.draggableLegendGroup.append('g')
+			.attr('class', 'smd-legend-group');
+		  
+		  // Make container and label for legend
+		  smd.legendGroup.append('rect')
+			.attr('class', 'smd-legend-container')
+			.attr('width', width)
+			.attr('height', legendSwatches.length * (unit * 2) + (unit * 3))
+			.attr('x', 0)
+			.attr('y', 0)
+			.style(smd.options.stylesLegendContainer);
+		  smd.legendGroup.append('text')
+			.attr('class', 'smd-legend-label')
+			.attr('font-size', unit)
+			.attr('x', (unit * 1))
+			.attr('y', (unit * 2))
+			.text(smd.options.legendTitle)
+			.style(smd.options.stylesLegendTitleText);
+		  
+		  // Add colors swatches
+		  smd.legendGroup
+			.selectAll('rect.smd-legend-swatch')
+			  .data(legendSwatches)
+			.enter().append('rect')
+			  .attr('class', 'smd-legend-swatch')
+			  .attr('width', unit)
+			  .attr('height', unit)
+			  .attr('x', (unit * 1))
+			  .attr('y', function(d, i) { return (i * unit * 2) + (unit * 3); })
+			  .style(smd.options.stylesLegendSwatch)
+			  .style('fill', function(d, i) { return smd.colorRange(d); });
+			  
+		  // Add text label
+		  smd.legendGroup
+			.selectAll('text.smd-legend-amount')
+			  .data(legendSwatches)
+			.enter().append('text')
+			  .attr('class', 'smd-legend-amount')
+			  .attr('font-size', unit)
+			  .attr('x', (unit * 3))
+			  .attr('y', function(d, i) { return (i * unit * 2) + (unit * 4 - 1); })
+			  .text(function(d, i) { return '>= ' + formatter(d); })
+			  .style(smd.options.stylesLegendText);
+		  
+		  // Scale legend
+		  smd.legendGroup
+			.attr('transform', 'scale(' + scale + ')');
+			
+		  // Offset group for dragging
+		  smd.draggableLegendGroup
+			.attr('transform', 'translate(' + offset + ')')
+			.data([{ x: offset[0] - 1, y: offset[1] - 1 }]);
+		}
+	}
+	return smd;
   };
   
   // Render
   smd.drawMap = function() {
     // Render paths
-	console.log("calling inside draw map??");
     smd.featureGroup
       .selectAll('path')
         .data(smd.data.features)
@@ -553,7 +642,7 @@ function SimpleMapD3(o) {
           if (smd.options.tooltipOn === true) {
             smd.container.select('.simple-map-d3-tooltip')
               .style('display', 'block')
-              .html(smd.options.tooltipContent(d));
+              .html(smd.options.tooltipContent(d, smd.options.year));
           }
           
           // Styles
