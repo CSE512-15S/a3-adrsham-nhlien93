@@ -56,7 +56,8 @@ function SimpleMapD3(o) {
   // Pennsylvania State University.
   // Licensed under the Apache License, Version 2.0
   smd.brewer = {
-	Custom: ['#ffffff', '#74c476', '#000000'],
+	//Custom: ['#ffffcc', '#fd8d3c', '#800026'],
+	Custom: ['#1111ee', '#11ee11', '#ee1111'],
     OrRd: ['#fff7ec', '#fee8c8', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548', '#d7301f', '#b30000', '#7f0000'],
     PuBu: ['#fff7fb', '#ece7f2', '#d0d1e6', '#a6bddb', '#74a9cf', '#3690c0', '#0570b0', '#045a8d', '#023858'],
     BuPu: ['#f7fcfd', '#e0ecf4', '#bfd3e6', '#9ebcda', '#8c96c6', '#8c6bb1', '#88419d', '#810f7c', '#4d004b'],
@@ -455,7 +456,7 @@ function SimpleMapD3(o) {
 		smd.legendGroup.append('rect')
 			.attr('class', 'smd-legend-container')
 			.attr('width', unit * 8 + 8)
-			.attr('height', unit * 16)
+			.attr('height', unit * 24)
 			.attr('x', 0)
 			.attr('y', 0)
 			.style(smd.options.stylesLegendContainer);
@@ -484,23 +485,32 @@ function SimpleMapD3(o) {
 
 		smd.gradient.append("svg:stop")
 			.attr("offset", "0%")
-			.attr("stop-color", "#ffffff")
+			.attr("stop-color", "hsl(240, 87%, 50%)")
 			.attr("stop-opacity", 1);
 
 		smd.gradient.append("svg:stop")
-			.attr("offset", "50%")
-			.attr("stop-color", "#74c476")
+			.attr("offset", "25%")
+			.attr("stop-color", "hsl(180, 87%, 50%)")
 			.attr("stop-opacity", 1);
 			
 		smd.gradient.append("svg:stop")
-			.attr("offset", "100%")
-			.attr("stop-color", "#000000")
+			.attr("offset", "50%")
+			.attr("stop-color", "hsl(120, 87%, 50%)")
 			.attr("stop-opacity", 1);
 
+		smd.gradient.append("svg:stop")
+			.attr("offset", "75%")
+			.attr("stop-color", "hsl(60, 87%, 50%)")
+			.attr("stop-opacity", 1);
+
+		smd.gradient.append("svg:stop")
+			.attr("offset", "100%")
+			.attr("stop-color", "hsl(0, 87%, 50%)")
+			.attr("stop-opacity", 1);
 
 		smd.svg.append("svg:rect")
 			.attr("width", unit * 2)
-			.attr("height", unit * 12)
+			.attr("height", unit * 20)
 			.style("fill", "url(#gradient)")
 			.style("stroke-width", 1)
 			.style("stroke", "#000000");
@@ -518,7 +528,7 @@ function SimpleMapD3(o) {
 			.attr('class', 'smd-legend-labels')
 			.attr('font-size', unit)
 			.attr('x', unit * 4)
-			.attr('y', unit * 15)
+			.attr('y', unit * 23)
 			.text("2048,000")
 			.style(smd.options.stylesLegendText);
 
