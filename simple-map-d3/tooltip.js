@@ -31,4 +31,4 @@ d3.helper.tooltip = function(accessor){
         });
 
     };
-};s
+};
