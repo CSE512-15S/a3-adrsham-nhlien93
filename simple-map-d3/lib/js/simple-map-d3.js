@@ -638,7 +638,7 @@ function SimpleMapD3(o) {
       //draw dots on cities
       smd.featureGroup.append("path")
         .datum(topojson.feature(topology, topology.objects.places))
-        .attr("d", smd.projPath)
+        .attr("d", smd.projPath.pointRadius(function(d) {return 0.5;}))
         .attr("class", "place");
 
       //draw names of cities
@@ -648,6 +648,8 @@ function SimpleMapD3(o) {
         .attr("class", "place-label")
         .attr("transform", function(d) { return "translate(" + smd.projection(d.geometry.coordinates) + ")"; })
         .attr("dy", ".35em")
+        .attr("dx", ".35em")
+        .attr("font-size", "2pt")
         .text(function(d) { return d.properties.name; });
     });
 
