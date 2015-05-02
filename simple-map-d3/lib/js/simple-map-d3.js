@@ -631,6 +631,28 @@ function SimpleMapD3(o) {
   
   // Render
   smd.drawMap = function() {
+
+    d3.json("example-data/us.json", function(error, topology) {
+      if (error) return console.error(error);
+
+      //draw dots on cities
+      smd.featureGroup.append("path")
+        .datum(topojson.feature(topology, topology.objects.places))
+        .attr("d", smd.projPath)
+        .attr("class", "place");
+
+      //draw names of cities
+      smd.featureGroup.selectAll(".place-label")
+        .data(topojson.feature(topology, topology.objects.places).features)
+        .enter().append("text")
+        .attr("class", "place-label")
+        .attr("transform", function(d) { return "translate(" + smd.projection(d.geometry.coordinates) + ")"; })
+        .attr("dy", ".35em")
+        .text(function(d) { return d.properties.name; });
+    });
+
+    
+
     // Render paths
     smd.featureGroup
       .selectAll('path')
