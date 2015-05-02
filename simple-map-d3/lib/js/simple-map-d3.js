@@ -20,16 +20,6 @@ function SimpleMapD3(o) {
     colorSet: 'YlOrBr',
     colorScale: 'quantile',
     colorReverse: false,
-    tooltipOn: true,
-    tooltipContent: function(d) {
-      var output = '';
-      for (var p in d.properties) {
-        if (d.properties.hasOwnProperty(p)) {
-          output += p + ': ' + d.properties[p] + '<br />';
-        }
-      }
-      return output;
-    },
     projection: 'albersUsa',
     legendFormatter: d3.format(','),
     legendOn: true,
@@ -222,7 +212,6 @@ function SimpleMapD3(o) {
       .attr('height', smd.height)
       .attr('class', 'smd-canvas')
       .classed('smd-draggable', smd.options.canvasDragOn)
-      .classed('smd-tooltipped', smd.options.tooltipOn)
       .data([{ x: 0, y: 0 }]);
       
     smd.background = smd.canvas.append('rect')
@@ -238,12 +227,6 @@ function SimpleMapD3(o) {
       
     smd.featureGroup = smd.draggableMapGroup.append('g')
       .attr('class', 'smd-feature-group');
-      
-    // Add tooltip
-    if (smd.options.tooltipOn === true) {
-      smd.container.classed('simple-map-d3-tooltip-container', true);
-      smd.container.append('div').classed('simple-map-d3-tooltip', true);
-    }
     
     return smd;
   };
@@ -641,7 +624,9 @@ function SimpleMapD3(o) {
 
 		//draw dots on cities
 		smd.featureGroup.selectAll(".place")
-			.data(topojson.feature(topology, topology.objects.places).features)
+			.data(topojson.feature(topology, topology.objects.places).features.sort(function(a, b) {
+					return b.properties['pop_' + smd.options.year] - a.properties['pop_' + smd.options.year]; 
+				}))
 			.enter().append("path")
 			.attr("class", "place")
 			.attr("d", smd.projPath.pointRadius(function(d) {
@@ -652,20 +637,8 @@ function SimpleMapD3(o) {
 				}
 			}))
 			.call(d3.helper.tooltip(function(d, i){
-				return "<b>"+d.properties.city + "</b><br/>pop: " + d.properties['pop_' + smd.options.year];
+				return "<b>"+d.properties.city + ", " + d.properties.county + "</b><br/>" + smd.options.year + " pop: " + d.properties['pop_' + smd.options.year];
 			}));
-
-		//draw names of cities
-		/*
-		smd.featureGroup.selectAll(".place-label")
-			.data(topojson.feature(topology, topology.objects.places).features)
-			.enter().append("text")
-			.attr("class", "place-label")
-			.attr("transform", function(d) { return "translate(" + smd.projection(d.geometry.coordinates) + ")"; })
-			.attr("dy", ".35em")
-			.attr("dx", ".35em")
-			.attr("font-size", "2pt")
-			.text(function(d) { return d.properties.name; });*/
     });
 
     
@@ -686,27 +659,9 @@ function SimpleMapD3(o) {
             return smd.colorRange(d.properties[smd.options.colorProperty]);
           }
         })
-        .on('mouseover', function(d) {
-          // Tooltip
-          if (smd.options.tooltipOn === true) {
-            smd.container.select('.simple-map-d3-tooltip')
-              .style('display', 'block')
-              .html(smd.options.tooltipContent(d, smd.options.year));
-          }
-          
-          // Styles
-          d3.select(this).style(smd.options.stylesHover);
-        })
-        .on('mouseout', function(d) {
-          // Tooltip
-          if (smd.options.tooltipOn === true) {
-            smd.container.select('.simple-map-d3-tooltip')
-              .style('display', 'none');
-          }
-          
-          // Styles
-          d3.select(this).style(smd.options.styles);
-        });
+		.call(d3.helper.tooltip(function(d, i){
+				return "<b>"+d.properties.county + "</b><br/>" + smd.options.year + " pop: " + d.properties['pop_' + smd.options.year];
+		}));
         
     return smd;
   };

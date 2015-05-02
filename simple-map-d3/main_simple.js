@@ -11,13 +11,7 @@
 			colorOn: true,
 			colorSet: 'Custom',
 			colorProperty: 'pop_1990',
-			year: 1990, 
-			tooltipContent: function(d) {
-			var p = d.properties;
-			return '<h5>' + p.county + '</h5>' +
-				 '<h6>Popupation: ' + p.pop_1990.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</h6>';
-			},
-			legendFormatter: d3.format(',f0')
+			year: 1990
 		});
 
     for (i=1991; i <=2014; i++) {
@@ -37,13 +31,7 @@
 				colorSet: 'Custom',
 				colorProperty: 'pop_' + i,
 				//add new variable year to object
-				year: i,
-				tooltipContent: function(d, year) {
-					var cur = d.properties['pop_' + year].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-					return '<h5>' + d.properties.county + '</h5>' +
-						 '<h6>Popupation: ' + cur + '</h6>';
-				},
-				legendFormatter: d3.format(',f0')
+				year: i
 			});
 
 			//when the drawing is done, hide the div

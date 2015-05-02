@@ -6,7 +6,7 @@ d3.helper.tooltip = function(accessor){
         var bodyNode = d3.select('body').node();
         selection.on("mouseover", function(d, i){
             // Clean up lost tooltips
-            d3.select('body').selectAll('div.tooltip').remove();
+            d3.select('body').selectAll('.tooltip').remove();
             // Append tooltip
             tooltipDiv = d3.select('body').append('div').attr('class', 'tooltip');
             var absoluteMousePos = d3.mouse(bodyNode);
@@ -16,9 +16,6 @@ d3.helper.tooltip = function(accessor){
                 .style('z-index', 1001);
             // Add text using the accessor function
             var tooltipText = accessor(d, i) || '';
-            // Crop text arbitrarily
-            //tooltipDiv.style('width', function(d, i){return (tooltipText.length > 80) ? '300px' : null;})
-            //    .html(tooltipText);
         })
         .on('mousemove', function(d, i) {
             // Move tooltip
