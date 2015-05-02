@@ -633,24 +633,39 @@ function SimpleMapD3(o) {
   smd.drawMap = function() {
 
     d3.json("example-data/us.json", function(error, topology) {
-      if (error) return console.error(error);
+		if (error) return console.error(error);
 
-      //draw dots on cities
-      smd.featureGroup.append("path")
-        .datum(topojson.feature(topology, topology.objects.places))
-        .attr("d", smd.projPath.pointRadius(function(d) {return 0.5;}))
-        .attr("class", "place");
+		var radius = d3.scale.sqrt()
+			.domain([0, 1e6])
+			.range([0, 10]);
 
-      //draw names of cities
-      smd.featureGroup.selectAll(".place-label")
-        .data(topojson.feature(topology, topology.objects.places).features)
-        .enter().append("text")
-        .attr("class", "place-label")
-        .attr("transform", function(d) { return "translate(" + smd.projection(d.geometry.coordinates) + ")"; })
-        .attr("dy", ".35em")
-        .attr("dx", ".35em")
-        .attr("font-size", "2pt")
-        .text(function(d) { return d.properties.name; });
+		//draw dots on cities
+		smd.featureGroup.selectAll(".place")
+			.data(topojson.feature(topology, topology.objects.places).features)
+			.enter().append("path")
+			.attr("class", "place")
+			.attr("d", smd.projPath.pointRadius(function(d) {
+				if(d.properties) {
+					return radius(d.properties['pop_' + smd.options.year]);
+				} else {
+					return;
+				}
+			}))
+			.call(d3.helper.tooltip(function(d, i){
+				return "<b>"+d.properties.city + "</b><br/>pop: " + d.properties['pop_' + smd.options.year];
+			}));
+
+		//draw names of cities
+		/*
+		smd.featureGroup.selectAll(".place-label")
+			.data(topojson.feature(topology, topology.objects.places).features)
+			.enter().append("text")
+			.attr("class", "place-label")
+			.attr("transform", function(d) { return "translate(" + smd.projection(d.geometry.coordinates) + ")"; })
+			.attr("dy", ".35em")
+			.attr("dx", ".35em")
+			.attr("font-size", "2pt")
+			.text(function(d) { return d.properties.name; });*/
     });
 
     

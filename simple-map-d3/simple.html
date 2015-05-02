@@ -13,9 +13,7 @@
 
   <body>
 
-    <section>
-      <script src="bower_components/topojson/topojson.js" charset="utf-8"></script>
-	
+    <section>	
 		<h3>Washington state's population over the years.</h3>
 		<input id="yearSelector" type="range" name="years" min="1990" max="2014" value="1990">
 		<span id="currentYear">1990</span>
@@ -50,8 +48,10 @@
 
     <script type="text/javascript" src="bower_components/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="bower_components/d3/d3.min.js"></script>
+	<script type="text/javascript" src="bower_components/topojson/topojson.js"></script>
     <script type="text/javascript" src="lib/js/simple-map-d3.js"></script>
 	<script type="text/javascript" src="main_simple.js"></script>
+	<script type="text/javascript" src="./tooltip.js"></script>
 
   </body>
 </html>
