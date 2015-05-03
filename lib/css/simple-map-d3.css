@@ -1,0 +1,89 @@
+/**
+ * Main CSS for Simple Map D3.
+ */
+
+.smd-canvas.smd-draggable,
+.smd-draggable { 
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+
+.smd-canvas.smd-draggable.dragging,
+.smd-draggable.dragging {
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+
+.smd-background {
+  fill: transparent;
+  stroke: 0;
+}
+
+.smd-path {
+  stroke: #000000;
+  stroke-width: .4px;
+  stroke-opacity: .35;
+}
+
+.smd-path:hover {
+  stroke-opacity: 1;
+  stroke-width: .5px;
+}
+
+.smd-canvas.smd-tooltipped .smd-path:hover {
+  cursor: pointer;
+}
+
+.smd-legend-container {
+  stroke-width: .5px;
+  fill: #FFFFFF;
+  fill-opacity: 0.9;
+  stroke: #898989;
+}
+
+.smd-legend-label {
+  font-weight: bold;
+}
+
+.smd-graticule {
+  fill: none;
+  stroke: #222222;
+  stroke-width: .5px;
+  stroke-opacity: .75;
+}
+
+.smd-globe {
+  fill: none;
+  stroke: #222222;
+  stroke-width: 3px;
+}
+
+.place {
+  fill: steelblue;
+  fill-opacity: .8;
+  stroke-width: .25px;
+  stroke: #fff;
+}
+.place:hover {
+  fill: steelblue;
+  fill-opacity: .8;
+  stroke-width: .5px;
+  stroke: #fff;
+}
+
+.tooltip{ 
+	background-color: rgba(255, 255, 255, 0.9);
+	margin: 10px;
+	font-size: 1.25em;
+	font-weight: bold;
+	padding-left: 10px;
+	padding-top: 10px;
+	padding-right: 10px; 
+	padding-bottom: 10px;
+    -webkit-border-radius:10px;
+    -moz-border-radius:10px;
+    border-radius:10px;
+	border: 2px solid #898989;
+}
