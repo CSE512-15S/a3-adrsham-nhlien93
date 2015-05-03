@@ -4,7 +4,7 @@
 1. Adrian Sham adrsham@uw.edu
 2. Hoang-Lien Nguyen nhlien93@uw.edu
 
-##Project Name
+##Where are the people in Washington
 
 ##Running Instructions
 
