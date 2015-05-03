@@ -61,14 +61,14 @@
 }
 
 .place {
-  fill: steelblue;
-  fill-opacity: .8;
+  fill: hsl(300, 87%, 50%);
+  fill-opacity: .4;
   stroke-width: .25px;
   stroke: #fff;
 }
 .place:hover {
-  fill: steelblue;
-  fill-opacity: .8;
+  fill: hsl(300, 87%, 50%);
+  fill-opacity: .9;
   stroke-width: .5px;
   stroke: #fff;
 }
