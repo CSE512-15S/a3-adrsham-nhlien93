@@ -61,13 +61,13 @@
 }
 
 .place {
-  fill: hsl(300, 87%, 50%);
+  fill: rgb(72, 0, 255);
   fill-opacity: .4;
   stroke-width: .25px;
   stroke: #fff;
 }
 .place:hover {
-  fill: hsl(300, 87%, 50%);
+  fill: rgb(72, 0, 255);
   fill-opacity: .9;
   stroke-width: .5px;
   stroke: #fff;
